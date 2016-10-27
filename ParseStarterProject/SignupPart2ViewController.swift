@@ -124,6 +124,9 @@ class SignupPart2ViewController: UIViewController, UIPickerViewDataSource, UIPic
         if !location.text.isEmpty {
             user.setObject(locationToSet, forKey: "location")
         }
+       var userObj = PFObject(className: "Chats")
+        userObj.setObject(username, forKey: "username")
+        userObj.saveInBackground()
         
         
         myPicker.dataSource = self

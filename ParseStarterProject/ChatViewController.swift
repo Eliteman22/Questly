@@ -18,6 +18,9 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
 
     @IBOutlet var chatName: UILabel!
     
+    var user1: String!
+    var user2: String!
+    
     var usernames: NSMutableArray! = NSMutableArray()
     var messages: NSMutableArray! = NSMutableArray()
     var images: NSMutableArray! = NSMutableArray()
@@ -36,7 +39,8 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
         myTable.delegate = self
         myTable.dataSource = self
         
-        messagesRef = Firebase(url: "https://questly.firebaseio.com/")
+        chatName.text = "\(user1) and \(user2)"
+        messagesRef = Firebase(url: "https://questly.firebaseio.com/chats/\(user1)+\(user2)")
         messagesRef.observeEventType(.ChildAdded, withBlock: {
             (snapshot) in
             

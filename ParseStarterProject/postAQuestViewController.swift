@@ -88,14 +88,7 @@ class postAQuestViewController: UIViewController, CLLocationManagerDelegate, MKM
         var latDelta: CLLocationDegrees = 0.01
         var lonDelta: CLLocationDegrees = 0.01
         
-        var course = userLocation.course
-        
-        var speed = userLocation.speed
-        
-        
-        
-        var altitude = userLocation.altitude
-        
+     
         
         
         var coordinate: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
@@ -114,8 +107,11 @@ class postAQuestViewController: UIViewController, CLLocationManagerDelegate, MKM
    
     @IBAction func postToFirebase(sender: UIButton) {
         if !questName.text.isEmpty && !questType.text.isEmpty && !reward.text.isEmpty && !timer.text.isEmpty && !descriptionField.text.isEmpty {
-            
+            println("lon: \(lonToSet)")
+            println("lat: \(latToSet)")
+            println(questName.text)
             let postRef = messagesRef.childByAppendingPath("\(PFUser.currentUser()!.username!): \(questName.text)")
+            
             
             let post = ["sender": "\(PFUser.currentUser()!.username!)", "questName": "\(questName.text)", "questType": "\(questType.text)", "reward": "\(reward.text)", "timer": "\(timer.text)", "description": "\(descriptionField.text)", "userLon":lonToSet, "userLat":latToSet, "Date": Date]
             let postRef1 = messagesRef.childByAutoId()

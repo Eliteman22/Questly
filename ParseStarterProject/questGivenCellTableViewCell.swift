@@ -9,6 +9,8 @@
 import UIKit
 
 class questGivenCellTableViewCell: UITableViewCell {
+    
+    
 
     override func awakeFromNib() {
         super.awakeFromNib()

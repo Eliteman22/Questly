@@ -9,7 +9,13 @@
 import UIKit
 
 class questTakenCellTableViewCell: UITableViewCell {
-
+    
+    @IBOutlet weak var questName: UILabel!
+    
+    @IBOutlet weak var progressBar: UIProgressView!
+    
+    @IBOutlet weak var progressValue: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

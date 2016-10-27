@@ -89,12 +89,15 @@ class CurrentJobsViewController: UIViewController, UITableViewDelegate, UITableV
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "moreInfoCtrl" {
             var svc = segue.destinationViewController as! MoreInfoViewController
+            println("name: \(questNameToSend)")
             svc.questName = questNameToSend
             svc.username = usernameToSend
             svc.timePosted = timeToPost
             svc.desc = descToSend
             svc.points = pointsToSend
+            println(latToSend)
             svc.lat = latToSend
+            println(lonToSend)
             svc.lon = lonToSend
         }
     }

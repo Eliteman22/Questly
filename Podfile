@@ -4,6 +4,6 @@
 # use_frameworks!
 
 target 'Questly' do
-    pod 'GoogleMaps'
+pod 'Firebase', '>= 2.5.0'
 end
 

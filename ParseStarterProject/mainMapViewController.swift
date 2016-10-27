@@ -12,7 +12,8 @@ import CoreLocation
 import Parse
 import Firebase
 
-class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate {
+
+class mainMapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     @IBOutlet var imageToPost: UIImageView!
     
@@ -22,13 +23,15 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
     
     @IBOutlet var healthBar: UIProgressView!
     
-    @IBOutlet var myMap: MKMapView!
+    @IBOutlet weak var rechargeAttack: UIProgressView!
+   
     
     var questNames: NSMutableArray! = NSMutableArray()
     var latitudes: NSMutableArray! = NSMutableArray()
     var longitudes: NSMutableArray! = NSMutableArray()
 
-    @IBOutlet var dinosaur: UIImageView!
+    @IBOutlet weak var myMap: MKMapView!
+
     
     let baseCoord = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     let radius: Double = 850000.0
@@ -38,17 +41,23 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
     var messagesRef: Firebase!
     
     override func viewDidAppear(animated: Bool) {
-        UIView.animateWithDuration(3.0, animations: {
-            self.dinosaur.alpha = 1
-        })
+        
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+    
         
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
         
         PFUser.currentUser()?.fetchInBackground()
+        
+        
         
         var x: Double! = PFUser.currentUser()!.objectForKey("experience") as? Double
         
@@ -60,15 +69,14 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         
         userLevel.text = "\(l)"
     
+
         
+        var transform = CGAffineTransformMakeScale(1.0, 11.0)
+        experienceBar.transform = transform
         
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestAlwaysAuthorization()
-        locationManager.startUpdatingLocation()
+        var transform2 = CGAffineTransformMakeScale(1.0, 6.0)
+        healthBar.transform = transform2
         
-        myMap.showsUserLocation = true
         
         var totalL = 25 + sqrt(625 + (100 * x)) / 50
         
@@ -100,6 +108,9 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
     }
     
     override func viewWillAppear(animated: Bool) {
+        
+        tabBarController?.tabBar.hidden = false
+        
         messagesRef = Firebase(url: "https://questly.firebaseio.com/quests")
         messagesRef.observeEventType(.ChildAdded, withBlock: {
             (snapshot) in
@@ -131,21 +142,33 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
             anotation.title = "\(questName!)"
             self.myMap.addAnnotation(anotation)
         })
-    }
 
-    
-    func mapView(mapView: MKMapView!, rendererForOverlay overlay: MKOverlay!) -> MKOverlayRenderer! {
-        if overlay is MKCircle {
-            var circle = MKCircleRenderer(overlay: overlay)
-         
-            circle.fillColor = UIColorFromRGB("b1cbe7", alpha: 0.8)
-           
-            circle.alpha = 0.2
-            return circle
-        } else {
+        
+    }
+    func mapView(mapView: MKMapView!, viewForAnnotation annotation: MKAnnotation!) -> MKAnnotationView! {
+        if annotation is MKUserLocation {
             return nil
         }
+        
+        let reuseId = "pin"
+        
+        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
+            if pinView == nil {
+                pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+                pinView!.canShowCallout = true
+                pinView!.animatesDrop = true
+                pinView!.image = UIImage(named: "Exclamation!")
+            } else {
+                pinView!.annotation = annotation
+        }
+        
+        return pinView
+        
+        
+        
     }
+
+
     
     func UIColorFromRGB(colorCode: String, alpha: Float = 1.0) -> UIColor {
         var scanner = NSScanner(string:colorCode)
@@ -160,22 +183,11 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         return UIColor(red: r, green: g, blue: b, alpha: CGFloat(alpha))
     }
     
-    func addRadiusCircle(location: CLLocation){
-        self.myMap.delegate = self
-        var circle = MKCircle(centerCoordinate: location.coordinate, radius: 150 as CLLocationDistance)
-
-        self.myMap.addOverlay(circle)
-    }
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        let location = locations.last as! CLLocation
+   
         
-        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04))
         
-        addRadiusCircle(location)
-        
-        self.myMap.setRegion(region, animated: true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -193,11 +205,7 @@ class mainMapViewController: UIViewController, MKMapViewDelegate, CLLocationMana
         self.presentViewController(alert, animated: true, completion: nil)
     }
     
-    @IBAction func fight(sender: UIButton) {
-        UIView.animateWithDuration(0.5
-            , animations: {
-                self.dinosaur.alpha = 0
-        })
-    }
+
+
     
 }

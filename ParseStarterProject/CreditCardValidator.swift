@@ -46,19 +46,28 @@ public class CreditCardValidator {
     */
     public func validateString(string: String) -> Bool {
         let numbers = self.onlyNumbersFromString(string)
-        if numbers.characters.count < 9 {
+        
+        var count = 0
+        for num in numbers {
+            count++
+        }
+        if count < 9 {
             return false
         }
         
         var reversedString = ""
         let range = Range<String.Index>(start: numbers.startIndex, end: numbers.endIndex)
         
-        numbers.enumerateSubstringsInRange(range, options: [NSStringEnumerationOptions.Reverse, NSStringEnumerationOptions.ByComposedCharacterSequences]) { (substring, substringRange, enclosingRange, stop) -> () in
+//        numbers.enumerateSubstringsInRange(range, options: [NSStringEnumerationOptions.Reverse, NSStringEnumerationOptions.ByComposedCharacterSequences]) { (substring, substringRange, enclosingRange, stop) -> () in
+//            reversedString += substring!
+//        }
+        numbers.enumerateSubstringsInRange(range, options: null) { (substring, substringRange, enclosingRange, stop) -> () in
             reversedString += substring!
+            
         }
         
         var oddSum = 0, evenSum = 0
-        let reversedArray = reversedString.characters
+        let reversedArray = reversedString.
         var i = 0
         
         for s in reversedArray {
@@ -87,9 +96,10 @@ public class CreditCardValidator {
     }
     
     public func onlyNumbersFromString(string: String) -> String {
+        let seperator = ""
         let set = NSCharacterSet.decimalDigitCharacterSet().invertedSet
         let numbers = string.componentsSeparatedByCharactersInSet(set)
-        return numbers.joinWithSeparator("")
+        return seperator.join(numbers)
     }
     
     // MARK: - Loading data
